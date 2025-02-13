@@ -209,6 +209,39 @@
                 font-size: 1.2rem;
             }
         }
+        .time-bar-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .time-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #27ae60, #e74c3c);
+            transform-origin: left;
+        }
+
+        /* Make space for the time bar */
+        .header {
+            padding-top: 28px;
+        }
+
+        /* Animation for warning state */
+        @keyframes pulse-warning {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .warning {
+            animation: pulse-warning 0.5s ease-in-out infinite;
+        }
+
     </style>
 </head>
 <body>
@@ -216,6 +249,9 @@
         <div class="header">
             <h1>Advanced Ramadan Quiz</h1>
             <div class="stats-container">
+                <div class="time-bar-container">
+            <div class="time-bar"></div>
+        </div>
                 <div class="stat-item">
                     <div id="score">Score: 0</div>
                 </div>
@@ -313,6 +349,14 @@
                 this.initializeElements();
                 this.setupEventListeners();
             }
+            this.timeBar = null;
+                this.timeBarAnimation = null;
+                // Add initialization for time bar
+                this.initializeElements();
+                this.setupEventListeners();
+            }
+        
+
 
             initializeElements() {
                 this.startBtn = document.getElementById("start-btn");
@@ -328,6 +372,127 @@
                 this.startScreen = document.getElementById("start-screen");
                 this.resultContainer = document.getElementById("result-container");
             }
+        this.timeBar = document.querySelector('.time-bar');
+            }
+        startTimer() {
+                // Clear any existing timer and animation
+                if (this.timer) clearInterval(this.timer);
+                if (this.timeBarAnimation) this.timeBarAnimation.kill();
+
+                // Reset timer values
+                this.timeLeft = 20;
+                this.timerElement.textContent = this.timeLeft;
+                this.timerElement.style.color = "white";
+                
+                // Animate time bar
+                if (this.timeBar) {
+                    this.timeBar.style.transform = 'scaleX(1)';
+                    this.timeBarAnimation = gsap.to(this.timeBar, {
+                        scaleX: 0,
+                        duration: 20,
+                        ease: "linear",
+                        onUpdate: () => {
+                            // Add warning class when less than 5 seconds remain
+                            if (this.timeLeft <= 5) {
+                                this.timeBar.classList.add('warning');
+                            }
+                        }
+                    });
+                }
+
+                // Start countdown timer
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    this.timerElement.textContent = this.timeLeft;
+                    
+                    if (this.timeLeft <= 5) {
+                        this.timerElement.style.color = "red";
+                    }
+                    
+                    if (this.timeLeft <= 0) {
+                        this.handleTimeUp();
+                    }
+                }, 1000);
+            }
+
+            handleTimeUp() {
+                clearInterval(this.timer);
+                if (this.timeBarAnimation) {
+                    this.timeBarAnimation.kill();
+                }
+                
+                // Show "Time's Up!" notification
+                const notifications = new NotificationManager();
+                notifications.show("Time's Up! Moving to next question", "info");
+                
+                // Reset time bar warning state
+                if (this.timeBar) {
+                    this.timeBar.classList.remove('warning');
+                }
+                
+                // Move to next question
+                this.currentQuestionIndex++;
+                setTimeout(() => {
+                    this.setNextQuestion();
+                }, 1000);
+            }
+
+            resetState() {
+                // Previous reset state functionality
+                if (this.timeBar) {
+                    this.timeBar.classList.remove('warning');
+                    this.timeBar.style.transform = 'scaleX(1)';
+                }
+                if (this.timeBarAnimation) {
+                    this.timeBarAnimation.kill();
+                }
+                while (this.answerButtons.firstChild) {
+                    this.answerButtons.removeChild(this.answerButtons.firstChild);
+                }
+            }
+
+            selectAnswer(selected, correct) {
+                // Kill the current timer and animation
+                clearInterval(this.timer);
+                if (this.timeBarAnimation) {
+                    this.timeBarAnimation.kill();
+                }
+
+                const buttons = document.querySelectorAll(".answer-btn");
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (button.innerText === correct) {
+                        button.classList.add("correct");
+                    } else if (button.innerText === selected && selected !== correct) {
+                        button.classList.add("wrong");
+                    }
+                });
+
+                if (selected === correct) {
+                    this.handleCorrectAnswer();
+                } else {
+                    this.handleWrongAnswer();
+                }
+
+                setTimeout(() => {
+                    this.currentQuestionIndex++;
+                    this.setNextQuestion();
+                }, 1000);
+            }
+
+            endQuiz() {
+                clearInterval(this.timer);
+                if (this.timeBarAnimation) {
+                    this.timeBarAnimation.kill();
+                }
+                if (this.timeBar) {
+                    this.timeBar.style.transform = 'scaleX(0)';
+                }
+                this.questionContainer.classList.add("hide");
+                this.resultContainer.classList.remove("hide");
+                this.showResults();
+            }
+
 
             setupEventListeners() {
                 this.startBtn.addEventListener("click", () => this.startQuiz());
