@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan Quiz Share & Redirect</title>
+    <title>Ramadan Quiz </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,6 +78,8 @@
 
     <div class="share-container">
         <p>1. Share with 5 groups / 15 friends on WhatsApp (click the "WhatsApp" button below)</p>
+        <p>2. Click continue after the bar is full 100%</p>
+
 
         <a id="whatsapp-btn" href="#" class="whatsapp-button" target="_blank">
             <button>WhatsApp →</button>
@@ -95,7 +97,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const shareText = encodeURIComponent("🌙✨ This Ramadan, stand a chance to WIN CASH REWARDS, FOOD SUPPLIES, AND MANY MORE! 🛍️🥘 Simply test your knowledge by answering all the quiz questions in the link below. Don't miss out on this special giveaway—your next big reward could be just a quiz away! 🎁🔥\n\n👉 [Your Quiz Link Here]");
+            const shareText = encodeURIComponent("🌙✨ This Ramadan, stand a chance to WIN CASH REWARDS, FOOD SUPPLIES, AND MANY MORE! 🛍️🥘 Simply test your knowledge by answering all the quiz questions in the link below. Don't miss out on this special giveaway—your next big reward could be just a quiz away! 🎁🔥\n\n👉 [https://knowyourdeen.github.io/knowyourdeenquiz/]");
             
             const whatsappURL = `https://api.whatsapp.com/send?text=${shareText}`;
             
