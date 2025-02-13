@@ -3,815 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Ramadan Quiz</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <title>Ramadan Knowledge Quiz</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #27ae60;
-            --accent-color: #e74c3c;
-            --background-color: #ecf0f1;
-            --text-color: #2c3e50;
-            --transition-speed: 0.3s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all var(--transition-speed) ease;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background-color);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-color);
-            padding: 20px;
-        }
-
-        #quiz-container {
-            width: 90%;
+            font-family: 'Arial', sans-serif;
             max-width: 800px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .header {
-            background: var(--primary-color);
-            color: white;
+            margin: 0 auto;
             padding: 20px;
-            text-align: center;
-            position: relative;
+            background-color: #f0f7ff;
+            color: #333;
         }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .stats-container {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+        .container {
+            background-color: white;
+            padding: 2rem;
             border-radius: 10px;
-            margin-top: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        .stat-item {
+        .quiz-header {
             text-align: center;
+            margin-bottom: 2rem;
         }
-
-        .content {
-            padding: 30px;
+        .crescent-moon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
-
-        #question-container {
+        .question-container {
+            display: none;
+            margin-bottom: 2rem;
+        }
+        .timer {
             text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
         }
-
-        #question {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-}
-
-        .btn-container {
+        .options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            gap: 1rem;
         }
-
-        button {
-            background: var(--primary-color);
+        .option {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+        .selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .correct {
-            background: var(--secondary-color);
-        }
-
-        .wrong {
-            background: var(--accent-color);
-        }
-
-        #progress-container {
-            margin-top: 30px;
-        }
-
-        #progress-bar-container {
-            height: 10px;
-            background: #eee;
             border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-
-        #progress-bar {
-            height: 100%;
-            background: var(--secondary-color);
-            width: 0;
-            transition: width 0.5s ease;
+        .btn:hover {
+            background-color: #2980b9;
         }
-
-        #timer-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
-            border-radius: 20px;
+        .result {
+            text-align: center;
+            display: none;
         }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.7);
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            max-width: 90%;
-            width: 400px;
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @media (max-width: 768px) {
-            .btn-container {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            #question {
-                font-size: 1.2rem;
-            }
-        }
-        .time-bar-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .progress {
             width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 1rem 0;
             overflow: hidden;
         }
-
-        .time-bar {
+        .progress-bar {
             height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #27ae60, #e74c3c);
-            transform-origin: left;
+            background-color: #3498db;
+            transition: width 0.5s;
         }
-
-        /* Make space for the time bar */
-        .header {
-            padding-top: 28px;
-        }
-
-        /* Animation for warning state */
-        @keyframes pulse-warning {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .warning {
-            animation: pulse-warning 0.5s ease-in-out infinite;
-        }
-
     </style>
 </head>
 <body>
-    <div id="quiz-container">
-        <div class="header">
-            <h1>Advanced Ramadan Quiz</h1>
-            <div class="stats-container">
-                <div class="time-bar-container">
-            <div class="time-bar"></div>
-        </div>
-                <div class="stat-item">
-                    <div id="score">Score: 0</div>
-                </div>
-                <div class="stat-item">
-                    <div id="level">Level: 1</div>
-                </div>
-                <div class="stat-item">
-                    <div id="streak">Streak: 0</div>
-                </div>
-            </div>
-            <div id="timer-container">
-                Time: <span id="time">20</span>s
-            </div>
+    <div class="container">
+        <div class="quiz-header">
+            <div class="crescent-moon">🌙</div>
+            <h1>Ramadan Knowledge Quiz</h1>
+            <p>Test your knowledge about the blessed month of Ramadan</p>
         </div>
         
-        <div class="content">
-            <div id="start-screen">
-                <h2>Welcome to the Advanced Ramadan Quiz!</h2>
-                <p>Test your knowledge about Ramadan with our interactive quiz.</p>
-                <button id="start-btn" class="pulse">Start Quiz</button>
-            </div>
+        <div id="start-screen">
+            <button class="btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
 
-            <div id="question-container" class="hide">
-                <p id="question"></p>
-                <div id="answer-buttons" class="btn-container"></div>
-                <div id="progress-container">
-                    <div id="progress-bar-container">
-                        <div id="progress-bar"></div>
-                    </div>
-                    <div id="progress-text">Question 1/10</div>
-                </div>
+        <div id="quiz-container" class="question-container">
+            <div class="timer">Time remaining: <span id="time">20</span>s</div>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
+            <h2 id="question"></h2>
+            <div class="options" id="options"></div>
+        </div>
 
-            <div id="result-container" class="hide">
-                <h2>Quiz Complete!</h2>
-                <div id="result-stats"></div>
-                <button id="retry-btn">Try Again</button>
-                <button id="share-btn">Share Results</button>
-            </div>
+        <div id="result" class="result">
+            <h2>Quiz Complete!</h2>
+            <p>Your score: <span id="score">0</span>/10</p>
+            <p id="feedback"></p>
+            <button class="btn" onclick="restartQuiz()">Try Again</button>
         </div>
     </div>
-
-    <div class="modal" id="share-modal">
-        <h2>Share Your Results</h2>
-        <p>Share with friends to unlock achievements!</p>
-        <button id="whatsapp-share">Share on WhatsApp</button>
-        <div id="share-progress-container">
-            <div id="share-progress-bar"></div>
-            <p id="share-progress-text">0/5 shares</p>
-        </div>
-    </div>
-    <div class="modal-overlay"></div>
 
     <script>
-        class Quiz {
-            constructor() {
-                this.questions = [
-                    {
-                        question: "What is the first day of Ramadan called?",
-                        answers: ["Eid ul-Fitr", "First Fast", "Tarawih Night", "Laylatul Qadr"],
-                        correct: "First Fast",
-                        difficulty: 1
-                    },
-                    {
-                        question: "What meal is eaten before sunrise during Ramadan?",
-                        answers: ["Iftar", "Suhur", "Maghrib", "Dinner"],
-                        correct: "Suhur",
-                        difficulty: 1
-                    },
-                    {
-                        question: "Which holy book was revealed during Ramadan?",
-                        answers: ["Torah", "Bible", "Quran", "Vedas"],
-                        correct: "Quran",
-                        difficulty: 1
-                    },
-                    {
-                        question: "What is the night of power called in Ramadan?",
-                        answers: ["Laylatul Qadr", "Laylatul Baraat", "Laylatul Isra", "Laylatul Miraj"],
-                        correct: "Laylatul Qadr",
-                        difficulty: 2
-                    },
-                    {
-                        question: "How many days does Ramadan typically last?",
-                        answers: ["28 days", "29 or 30 days", "31 days", "40 days"],
-                        correct: "29 or 30 days",
-                        difficulty: 2
-                    }
-                ];
-                this.currentQuestionIndex = 0;
-                this.score = 0;
-                this.streak = 0;
-                this.level = 1;
-                this.timeLeft = 20;
-                this.timer = null;
-                this.initializeElements();
-                this.setupEventListeners();
+        const questions = [
+            {
+                question: "What is the primary purpose of fasting during Ramadan?",
+                options: [
+                    "To develop self-discipline and God-consciousness (Taqwa)",
+                    "To lose weight",
+                    "To save money on food",
+                    "To celebrate with family"
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the meal called that Muslims eat before dawn during Ramadan?",
+                options: ["Iftar", "Suhoor", "Lunch", "Dinner"],
+                correct: 1
+            },
+            {
+                question: "Which night in Ramadan is considered the 'Night of Power' (Laylat al-Qadr)?",
+                options: [
+                    "The first night",
+                    "The 15th night",
+                    "One of the odd nights in the last ten days",
+                    "The last night"
+                ],
+                correct: 2
+            },
+            {
+                question: "What breaks the fast?",
+                options: [
+                    "Taking medication",
+                    "Accidentally eating or drinking",
+                    "Intentionally eating or drinking",
+                    "Swimming"
+                ],
+                correct: 2
+            },
+            {
+                question: "Who is exempt from fasting during Ramadan?",
+                options: [
+                    "Everyone over 40",
+                    "Children under puberty, sick people, and travelers",
+                    "Only children",
+                    "No one is exempt"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is Zakat al-Fitr?",
+                options: [
+                    "A special prayer",
+                    "A charitable donation given at the end of Ramadan",
+                    "A type of food",
+                    "A celebration"
+                ],
+                correct: 1
+            },
+            {
+                question: "When do Muslims break their fast?",
+                options: [
+                    "At sunrise",
+                    "At noon",
+                    "At sunset",
+                    "At midnight"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the spiritual reward for fasting?",
+                options: [
+                    "Monetary gains",
+                    "Social status",
+                    "Forgiveness of past sins",
+                    "Better health"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is recommended to break the fast with?",
+                options: [
+                    "A full meal",
+                    "Dates and water",
+                    "Bread and butter",
+                    "Any drink"
+                ],
+                correct: 1
+            },
+            {
+                question: "What extra prayers do Muslims perform during Ramadan nights?",
+                options: [
+                    "Taraweeh",
+                    "Jumuah",
+                    "Isha",
+                    "Tahajjud"
+                ],
+                correct: 0
             }
-            this.timeBar = null;
-                this.timeBarAnimation = null;
-                // Add initialization for time bar
-                this.initializeElements();
-                this.setupEventListeners();
-            }
-        
+        ];
 
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        let timeLeft;
 
-            initializeElements() {
-                this.startBtn = document.getElementById("start-btn");
-                this.questionContainer = document.getElementById("question-container");
-                this.questionElement = document.getElementById("question");
-                this.answerButtons = document.getElementById("answer-buttons");
-                this.timerElement = document.getElementById("time");
-                this.progressBar = document.getElementById("progress-bar");
-                this.progressText = document.getElementById("progress-text");
-                this.scoreElement = document.getElementById("score");
-                this.levelElement = document.getElementById("level");
-                this.streakElement = document.getElementById("streak");
-                this.startScreen = document.getElementById("start-screen");
-                this.resultContainer = document.getElementById("result-container");
-            }
-        this.timeBar = document.querySelector('.time-bar');
-            }
-        startTimer() {
-                // Clear any existing timer and animation
-                if (this.timer) clearInterval(this.timer);
-                if (this.timeBarAnimation) this.timeBarAnimation.kill();
-
-                // Reset timer values
-                this.timeLeft = 20;
-                this.timerElement.textContent = this.timeLeft;
-                this.timerElement.style.color = "white";
-                
-                // Animate time bar
-                if (this.timeBar) {
-                    this.timeBar.style.transform = 'scaleX(1)';
-                    this.timeBarAnimation = gsap.to(this.timeBar, {
-                        scaleX: 0,
-                        duration: 20,
-                        ease: "linear",
-                        onUpdate: () => {
-                            // Add warning class when less than 5 seconds remain
-                            if (this.timeLeft <= 5) {
-                                this.timeBar.classList.add('warning');
-                            }
-                        }
-                    });
-                }
-
-                // Start countdown timer
-                this.timer = setInterval(() => {
-                    this.timeLeft--;
-                    this.timerElement.textContent = this.timeLeft;
-                    
-                    if (this.timeLeft <= 5) {
-                        this.timerElement.style.color = "red";
-                    }
-                    
-                    if (this.timeLeft <= 0) {
-                        this.handleTimeUp();
-                    }
-                }, 1000);
-            }
-
-            handleTimeUp() {
-                clearInterval(this.timer);
-                if (this.timeBarAnimation) {
-                    this.timeBarAnimation.kill();
-                }
-                
-                // Show "Time's Up!" notification
-                const notifications = new NotificationManager();
-                notifications.show("Time's Up! Moving to next question", "info");
-                
-                // Reset time bar warning state
-                if (this.timeBar) {
-                    this.timeBar.classList.remove('warning');
-                }
-                
-                // Move to next question
-                this.currentQuestionIndex++;
-                setTimeout(() => {
-                    this.setNextQuestion();
-                }, 1000);
-            }
-
-            resetState() {
-                // Previous reset state functionality
-                if (this.timeBar) {
-                    this.timeBar.classList.remove('warning');
-                    this.timeBar.style.transform = 'scaleX(1)';
-                }
-                if (this.timeBarAnimation) {
-                    this.timeBarAnimation.kill();
-                }
-                while (this.answerButtons.firstChild) {
-                    this.answerButtons.removeChild(this.answerButtons.firstChild);
-                }
-            }
-
-            selectAnswer(selected, correct) {
-                // Kill the current timer and animation
-                clearInterval(this.timer);
-                if (this.timeBarAnimation) {
-                    this.timeBarAnimation.kill();
-                }
-
-                const buttons = document.querySelectorAll(".answer-btn");
-                buttons.forEach(button => {
-                    button.disabled = true;
-                    if (button.innerText === correct) {
-                        button.classList.add("correct");
-                    } else if (button.innerText === selected && selected !== correct) {
-                        button.classList.add("wrong");
-                    }
-                });
-
-                if (selected === correct) {
-                    this.handleCorrectAnswer();
-                } else {
-                    this.handleWrongAnswer();
-                }
-
-                setTimeout(() => {
-                    this.currentQuestionIndex++;
-                    this.setNextQuestion();
-                }, 1000);
-            }
-
-            endQuiz() {
-                clearInterval(this.timer);
-                if (this.timeBarAnimation) {
-                    this.timeBarAnimation.kill();
-                }
-                if (this.timeBar) {
-                    this.timeBar.style.transform = 'scaleX(0)';
-                }
-                this.questionContainer.classList.add("hide");
-                this.resultContainer.classList.remove("hide");
-                this.showResults();
-            }
-
-
-            setupEventListeners() {
-                this.startBtn.addEventListener("click", () => this.startQuiz());
-                document.getElementById("retry-btn").addEventListener("click", () => this.resetQuiz());
-                document.getElementById("share-btn").addEventListener("click", () => this.showShareModal());
-            }
-
-            startQuiz() {
-                this.startScreen.classList.add("hide");
-                this.questionContainer.classList.remove("hide");
-                this.shuffleQuestions();
-                this.setNextQuestion();
-                this.startTimer();
-                gsap.from(this.questionContainer, {
-                    opacity: 0,
-                    y: 20,
-                    duration: 0.5
-                });
-            }
-
-            shuffleQuestions() {
-                for (let i = this.questions.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
-                }
-            }
-
-            setNextQuestion() {
-                this.resetState();
-                if (this.currentQuestionIndex >= this.questions.length) {
-                    this.endQuiz();
-                    return;
-                }
-                this.showQuestion(this.questions[this.currentQuestionIndex]);
-                this.updateProgress();
-            }
-
-            showQuestion(question) {
-                this.questionElement.innerText = question.question;
-                question.answers.forEach((answer, index) => {
-                    const button = document.createElement("button");
-                    button.innerText = answer;
-                    button.classList.add("answer-btn");
-                    button.style.animationDelay = `${index * 0.1}s`;
-                    button.addEventListener("click", () => this.selectAnswer(answer, question.correct));
-                    this.answerButtons.appendChild(button);
-                });
-            }
-
-            selectAnswer(selected, correct) {
-                const buttons = document.querySelectorAll(".answer-btn");
-                buttons.forEach(button => {
-                    button.disabled = true;
-                    if (button.innerText === correct) {
-                        button.classList.add("correct");
-                    } else if (button.innerText === selected && selected !== correct) {
-                        button.classList.add("wrong");
-                    }
-                });
-
-                if (selected === correct) {
-                    this.handleCorrectAnswer();
-                } else {
-                    this.handleWrongAnswer();
-                }
-
-                setTimeout(() => {
-                    this.currentQuestionIndex++;
-                    this.setNextQuestion();
-                }, 1000);
-            }
-
-            handleCorrectAnswer() {
-                this.score += (100 * this.level);
-                this.streak++;
-                if (this.streak % 3 === 0) {
-                    this.level++;
-                }
-                this.updateStats();
-                gsap.to(this.scoreElement, {
-                    scale: 1.2,
-                    duration: 0.2,
-                    yoyo: true,
-                    repeat: 1
-                });
-            }
-
-            handleWrongAnswer() {
-                this.streak = 0;
-                this.updateStats();
-            }
-
-            updateStats() {
-                this.scoreElement.textContent = `Score: ${this.score}`;
-                this.levelElement.textContent = `Level: ${this.level}`;
-                this.streakElement.textContent = `Streak: ${this.streak}`;
-            }
-
-            updateProgress() {
-                const progress = (this.currentQuestionIndex / this.questions.length) * 100;
-                this.progressBar.style.width = `${progress}%`;
-                this.progressText.textContent = `Question ${this.currentQuestionIndex + 1}/${this.questions.length}`;
-            }
-
-            startTimer() {
-                this.timer = setInterval(() => {
-                    this.timeLeft--;
-                    this.timerElement.textContent = this.timeLeft;
-                    if (this.timeLeft <= 5) {
-                        this.timerElement.style.color = "red";
-                    }
-                    if (this.timeLeft <= 0) {
-                        this.endQuiz();
-                    }
-                }, 1000);
-            }
-
-            endQuiz() {
-                clearInterval(this.timer);
-                this.questionContainer.classList.add("hide");
-                this.resultContainer.classList.remove("hide");
-                this.showResults();
-            }
-
-            showResults() {
-                const resultStats = document.getElementById("result-stats");
-                resultStats.innerHTML = `
-                    <h3>Final Score: ${this.score}</h3>
-                    <p>Highest Level: ${this.level}</p>
-                    <p>Best Streak: ${this.streak}</p>
-          `;
-                gsap.from(resultStats.children, {
-                    opacity: 0,
-                    y: 20,
-                    duration: 0.5,
-                    stagger: 0.2
-                });
-            }
-
-            showShareModal() {
-                const modal = document.getElementById("share-modal");
-                const overlay = document.querySelector(".modal-overlay");
-                modal.classList.add("active");
-                overlay.classList.add("active");
-
-                const shareProgress = {
-                    shares: 0,
-                    required: 5,
-                    updateProgress: function() {
-                        const progressBar = document.getElementById("share-progress-bar");
-                        const progressText = document.getElementById("share-progress-text");
-                        const progress = (this.shares / this.required) * 100;
-                        progressBar.style.width = `${progress}%`;
-                        progressText.textContent = `${this.shares}/${this.required} shares`;
-                    }
-                };
-
-                document.getElementById("whatsapp-share").addEventListener("click", () => {
-                    const shareText = `I scored ${this.score} points in the Advanced Ramadan Quiz! Can you beat my score? 🌙`;
-                    const shareUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
-                    window.open(shareUrl);
-                    
-                    shareProgress.shares++;
-                    shareProgress.updateProgress();
-                    
-                    if (shareProgress.shares >= shareProgress.required) {
-                        this.unlockAchievement("Sharing is Caring");
-                    }
-                });
-            }
-
-            unlockAchievement(achievementName) {
-                const achievement = document.createElement("div");
-                achievement.classList.add("achievement");
-                achievement.innerHTML = `
-                    <h3>🏆 Achievement Unlocked!</h3>
-                    <p>${achievementName}</p>
-                `;
-                document.body.appendChild(achievement);
-                
-                gsap.from(achievement, {
-                    y: 50,
-                    opacity: 0,
-                    duration: 0.5
-                });
-                
-                setTimeout(() => {
-                    gsap.to(achievement, {
-                        y: -50,
-                        opacity: 0,
-                        duration: 0.5,
-                        onComplete: () => achievement.remove()
-                    });
-                }, 3000);
-            }
-
-            resetState() {
-                while (this.answerButtons.firstChild) {
-                    this.answerButtons.removeChild(this.answerButtons.firstChild);
-                }
-            }
-
-            resetQuiz() {
-                this.currentQuestionIndex = 0;
-                this.score = 0;
-                this.streak = 0;
-                this.level = 1;
-                this.timeLeft = 20;
-                this.updateStats();
-                this.resultContainer.classList.add("hide");
-                this.startScreen.classList.remove("hide");
-                this.timerElement.style.color = "white";
-            }
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            loadQuestion();
         }
 
-        // Initialize notifications
-        class NotificationManager {
-            constructor() {
-                this.container = document.createElement("div");
-                this.container.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 1000;
-                `;
-                document.body.appendChild(this.container);
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResult();
+                return;
             }
 
-            show(message, type = "info") {
-                const notification = document.createElement("div");
-                notification.style.cssText = `
-                    background: ${type === "success" ? "#27ae60" : "#e74c3c"};
-                    color: white;
-                    padding: 15px 25px;
-                    border-radius: 5px;
-                    margin-bottom: 10px;
-                    opacity: 0;
-                    transform: translateX(50px);
-                    transition: all 0.3s ease;
-                `;
-                notification.textContent = message;
-                this.container.appendChild(notification);
-
-                // Trigger animation
-                setTimeout(() => {
-                    notification.style.opacity = "1";
-                    notification.style.transform = "translateX(0)";
-                }, 100);
-
-                // Remove notification
-                setTimeout(() => {
-                    notification.style.opacity = "0";
-                    notification.style.transform = "translateX(50px)";
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
-            }
-        }
-
-        // Initialize confetti effect
-        function createConfetti() {
-            const colors = ["#f1c40f", "#e74c3c", "#3498db", "#2ecc71"];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement("div");
-                confetti.style.cssText = `
-                    position: fixed;
-                    width: 10px;
-                    height: 10px;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${Math.random() * 100}vw;
-                    top: -10px;
-                    opacity: 0;
-                    transform: translateY(0);
-                    animation: fall ${Math.random() * 3 + 2}s linear forwards;
-                `;
-                document.body.appendChild(confetti);
-
-                setTimeout(() => confetti.remove(), 5000);
-            }
-        }
-
-        // Add animation keyframes
-        const style = document.createElement("style");
-        style.textContent = `
-            @keyframes fall {
-                0% {
-                    opacity: 1;
-                    transform: translateY(0) rotate(0deg);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateY(100vh) rotate(720deg);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize the quiz when the DOM is loaded
-        document.addEventListener("DOMContentLoaded", () => {
-            const quiz = new Quiz();
-            const notifications = new NotificationManager();
-
-            // Add keyboard controls
-            document.addEventListener("keydown", (e) => {
-                const answerButtons = document.querySelectorAll(".answer-btn");
-                if (answerButtons.length) {
-                    switch(e.key) {
-                        case "1":
-                        case "2":
-                        case "3":
-                        case "4":
-                            const index = parseInt(e.key) - 1;
-                            if (answerButtons[index]) {
-                                answerButtons[index].click();
-                            }
-                            break;
-                    }
-                }
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => selectOption(index);
+                optionsContainer.appendChild(button);
             });
-        });
+
+            // Update progress bar
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // Reset and start timer
+            timeLeft = 20;
+            if (timer) clearInterval(timer);
+            timer = setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        function updateTimer() {
+            document.getElementById('time').textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                nextQuestion();
+            }
+            timeLeft--;
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            
+            if (index === questions[currentQuestion].correct) {
+                score++;
+            }
+            
+            setTimeout(nextQuestion, 1000);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            clearInterval(timer);
+            loadQuestion();
+        }
+
+        function showResult() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('score').textContent = score;
+            
+            const feedback = document.getElementById('feedback');
+            if (score >= 8) {
+                feedback.textContent = "Excellent! You have a great understanding of Ramadan!";
+            } else if (score >= 5) {
+                feedback.textContent = "Good effort! Keep learning about Ramadan!";
+            } else {
+                feedback.textContent = "Keep studying! There's always more to learn about Ramadan.";
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            loadQuestion();
+        }
     </script>
 </body>
 </html>
