@@ -3,311 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan Knowledge Quiz</title>
+    <title>Ramadan Quiz Share & Redirect</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            text-align: center;
             padding: 20px;
-            background-color: #f0f7ff;
-            color: #333;
         }
-        .container {
-            background-color: white;
-            padding: 2rem;
+        .share-container {
+            background: #fff;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-        .quiz-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .crescent-moon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .question-container {
-            display: none;
-            margin-bottom: 2rem;
-        }
-        .timer {
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-        }
-        .options {
-            display: grid;
-            gap: 1rem;
-        }
-        .option {
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .option:hover {
-            background-color: #f5f5f5;
-        }
-        .selected {
-            background-color: #3498db;
+        .whatsapp-button button {
+            background-color: #25D366;
             color: white;
-            border-color: #3498db;
-        }
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            background-color: #3498db;
-            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        .result {
-            text-align: center;
-            display: none;
-        }
-        .progress {
             width: 100%;
+        }
+        .whatsapp-button button:hover {
+            background-color: #1ebe5d;
+        }
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0;
             height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            margin: 1rem 0;
+            position: relative;
             overflow: hidden;
         }
         .progress-bar {
+            background: #007bff;
             height: 100%;
-            background-color: #3498db;
+            width: 0%;
             transition: width 0.5s;
+        }
+        #progress-percentage {
+            position: absolute;
+            right: 10px;
+            font-weight: bold;
+        }
+        .continue-button {
+            background-color: red;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .continue-button.enabled {
+            cursor: pointer;
+            background-color: #d9534f;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="quiz-header">
-            <div class="crescent-moon">🌙</div>
-            <h1>Ramadan Knowledge Quiz</h1>
-            <p>Test your knowledge about the blessed month of Ramadan</p>
-        </div>
-        
-        <div id="start-screen">
-            <button class="btn" onclick="startQuiz()">Start Quiz</button>
+
+    <div class="share-container">
+        <p>1. Share with 5 groups / 15 friends on WhatsApp (click the "WhatsApp" button below)</p>
+
+        <a id="whatsapp-btn" href="#" class="whatsapp-button" target="_blank">
+            <button>WhatsApp →</button>
+        </a>
+
+        <p class="progress-text">Share until the blue bar is full!</p>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <span id="progress-percentage">0%</span>
         </div>
 
-        <div id="quiz-container" class="question-container">
-            <div class="timer">Time remaining: <span id="time">20</span>s</div>
-            <div class="progress">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <h2 id="question"></h2>
-            <div class="options" id="options"></div>
-        </div>
-
-        <div id="result" class="result">
-            <h2>Quiz Complete!</h2>
-            <p>Your score: <span id="score">0</span>/10</p>
-            <p id="feedback"></p>
-            <button class="btn" onclick="restartQuiz()">Try Again</button>
-        </div>
+        <button id="continue-btn" class="continue-button" disabled>Continue</button>
     </div>
 
     <script>
-        const questions = [
-            {
-                question: "What is the primary purpose of fasting during Ramadan?",
-                options: [
-                    "To develop self-discipline and God-consciousness (Taqwa)",
-                    "To lose weight",
-                    "To save money on food",
-                    "To celebrate with family"
-                ],
-                correct: 0
-            },
-            {
-                question: "What is the meal called that Muslims eat before dawn during Ramadan?",
-                options: ["Iftar", "Suhoor", "Lunch", "Dinner"],
-                correct: 1
-            },
-            {
-                question: "Which night in Ramadan is considered the 'Night of Power' (Laylat al-Qadr)?",
-                options: [
-                    "The first night",
-                    "The 15th night",
-                    "One of the odd nights in the last ten days",
-                    "The last night"
-                ],
-                correct: 2
-            },
-            {
-                question: "What breaks the fast?",
-                options: [
-                    "Taking medication",
-                    "Accidentally eating or drinking",
-                    "Intentionally eating or drinking",
-                    "Swimming"
-                ],
-                correct: 2
-            },
-            {
-                question: "Who is exempt from fasting during Ramadan?",
-                options: [
-                    "Everyone over 40",
-                    "Children under puberty, sick people, and travelers",
-                    "Only children",
-                    "No one is exempt"
-                ],
-                correct: 1
-            },
-            {
-                question: "What is Zakat al-Fitr?",
-                options: [
-                    "A special prayer",
-                    "A charitable donation given at the end of Ramadan",
-                    "A type of food",
-                    "A celebration"
-                ],
-                correct: 1
-            },
-            {
-                question: "When do Muslims break their fast?",
-                options: [
-                    "At sunrise",
-                    "At noon",
-                    "At sunset",
-                    "At midnight"
-                ],
-                correct: 2
-            },
-            {
-                question: "What is the spiritual reward for fasting?",
-                options: [
-                    "Monetary gains",
-                    "Social status",
-                    "Forgiveness of past sins",
-                    "Better health"
-                ],
-                correct: 2
-            },
-            {
-                question: "What is recommended to break the fast with?",
-                options: [
-                    "A full meal",
-                    "Dates and water",
-                    "Bread and butter",
-                    "Any drink"
-                ],
-                correct: 1
-            },
-            {
-                question: "What extra prayers do Muslims perform during Ramadan nights?",
-                options: [
-                    "Taraweeh",
-                    "Jumuah",
-                    "Isha",
-                    "Tahajjud"
-                ],
-                correct: 0
-            }
-        ];
-
-        let currentQuestion = 0;
-        let score = 0;
-        let timer;
-        let timeLeft;
-
-        function startQuiz() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('quiz-container').style.display = 'block';
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            if (currentQuestion >= questions.length) {
-                showResult();
-                return;
-            }
-
-            const question = questions[currentQuestion];
-            document.getElementById('question').textContent = question.question;
+        document.addEventListener("DOMContentLoaded", function () {
+            const shareText = encodeURIComponent("🌙✨ This Ramadan, stand a chance to WIN CASH REWARDS, FOOD SUPPLIES, AND MANY MORE! 🛍️🥘 Simply test your knowledge by answering all the quiz questions in the link below. Don't miss out on this special giveaway—your next big reward could be just a quiz away! 🎁🔥\n\n👉 [Your Quiz Link Here]");
             
-            const optionsContainer = document.getElementById('options');
-            optionsContainer.innerHTML = '';
+            const whatsappURL = `https://api.whatsapp.com/send?text=${shareText}`;
             
-            question.options.forEach((option, index) => {
-                const button = document.createElement('div');
-                button.className = 'option';
-                button.textContent = option;
-                button.onclick = () => selectOption(index);
-                optionsContainer.appendChild(button);
+            document.getElementById("whatsapp-btn").setAttribute("href", whatsappURL);
+
+            let shares = 0;
+            const maxShares = 5;
+            const progressBar = document.getElementById("progress-bar");
+            const progressPercentage = document.getElementById("progress-percentage");
+            const continueBtn = document.getElementById("continue-btn");
+
+            document.getElementById("whatsapp-btn").addEventListener("click", function () {
+                shares++;
+                let progress = (shares / maxShares) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressPercentage.textContent = `${Math.min(progress, 100).toFixed(0)}%`;
+
+                if (shares >= maxShares) {
+                    continueBtn.classList.add("enabled");
+                    continueBtn.removeAttribute("disabled");
+                }
             });
 
-            // Update progress bar
-            const progress = ((currentQuestion + 1) / questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-
-            // Reset and start timer
-            timeLeft = 20;
-            if (timer) clearInterval(timer);
-            timer = setInterval(updateTimer, 1000);
-            updateTimer();
-        }
-
-        function updateTimer() {
-            document.getElementById('time').textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                nextQuestion();
-            }
-            timeLeft--;
-        }
-
-        function selectOption(index) {
-            const options = document.querySelectorAll('.option');
-            options.forEach(option => option.classList.remove('selected'));
-            options[index].classList.add('selected');
-            
-            if (index === questions[currentQuestion].correct) {
-                score++;
-            }
-            
-            setTimeout(nextQuestion, 1000);
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            clearInterval(timer);
-            loadQuestion();
-        }
-
-        function showResult() {
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('score').textContent = score;
-            
-            const feedback = document.getElementById('feedback');
-            if (score >= 8) {
-                feedback.textContent = "Excellent! You have a great understanding of Ramadan!";
-            } else if (score >= 5) {
-                feedback.textContent = "Good effort! Keep learning about Ramadan!";
-            } else {
-                feedback.textContent = "Keep studying! There's always more to learn about Ramadan.";
-            }
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('quiz-container').style.display = 'block';
-            loadQuestion();
-        }
+            continueBtn.addEventListener("click", function () {
+                if (shares >= maxShares) {
+                    window.location.href = "https://knowyourdeen.github.io/knowyourdeenquiz/";
+                }
+            });
+        });
     </script>
+
 </body>
 </html>
