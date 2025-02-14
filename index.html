@@ -144,41 +144,56 @@
             margin: 20px 0;
             font-size: 24px;
         }
-        .popup-ad {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background: black;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 9999;
-            text-decoration: none;
-        }
-        .popup-ad h3,
-        .popup-ad p {
-            color: white;
-            margin: 10px 0;
-        }
-        .popup-ad .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .popup-ad .countdown {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #ffc107;
-        }
+     
+         .popupAd {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 9999;
+    text-decoration: none;
+}
+
+.popupAd h2 {
+    color: white;
+    font-size: 2rem;
+}
+
+.popupAd p {
+    color: white;
+    font-size: 1.2rem;
+    max-width: 80%;
+}
+
+.popupAd .cta-button {
+    margin-top: 20px;
+}
+
+.popupAd .cta-button span {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #28a745;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.countdown {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffc107;
+}
     </style>
 </head>
 <body>
