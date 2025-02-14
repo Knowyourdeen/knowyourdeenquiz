@@ -293,29 +293,10 @@
     </div>
 
     <script>
-       // Popup management
-function showPopup(popupId) {
-    const popup = document.getElementById(popupId);
-    popup.style.display = 'block';
-    setTimeout(() => closePopup(popupId), 10000); // Close after 10 seconds
-}
-
-function closePopup(popupId) {
-    const popup = document.getElementById(popupId);
-    popup.style.display = 'none';
-}
-
-// Show donation popup every 30 seconds
-setInterval(() => {
-    showPopup('donation-popup');
-}, 30000);
-
-// Initial popup displays
-setTimeout(() => showPopup('donation-popup'), 5000);
           function showPopup() {
             let popup = document.getElementById("popupAd");
             let countdown = document.getElementById("countdown");
-            let timeLeft = 5;
+            let timeLeft = 15;
             popup.style.display = "flex"; // Changed to flex for better centering
             
             let timer = setInterval(() => {
