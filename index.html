@@ -214,6 +214,62 @@
             border: none;
             padding: 5px;
         }
+        .popup {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    z-index: 1000;
+    animation: slideIn 0.5s ease-out;
+}
+
+.popup img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.popup .cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #ffd700;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.popup .cta-button:hover {
+    transform: scale(1.05);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+}
        
 
         
@@ -223,7 +279,13 @@
     </style>
 </head>
 <body>
-   
+   <div id="donation-popup" class="popup">
+    <span class="close-popup" onclick="closePopup('donation-popup')">×</span>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8Yl7tC0OLtn-JNMwiaE_wFCGKVo6v4aQX5g&s" alt="Hungry child placeholder">
+    <p><strong>DID YOU KNOW:</strong> Every minute, over 100 people break their fast without proper food.</p>
+    <p>Your donation can help provide iftar meals to those in need this Ramadan.</p>
+    <a href="https://knowyourdeen.github.io/knowyourdeendonations/" class="cta-button">CLICK HERE TO DONATE</a>
+</div>
     <a id="popupAd" class="popup-ad" href="https://knowyourdeen.github.io/Knowyourdeen/" target="_blank">
         <button class="close-button" onclick="closePopup(event)">✕</button>
         <div class="popup-content">
@@ -290,7 +352,25 @@
     </div>
 
     <script>
-       
+       // Popup management
+function showPopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.style.display = 'block';
+    setTimeout(() => closePopup(popupId), 10000); // Close after 10 seconds
+}
+
+function closePopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.style.display = 'none';
+}
+
+// Show donation popup every 30 seconds
+setInterval(() => {
+    showPopup('donation-popup');
+}, 30000);
+
+// Initial popup displays
+setTimeout(() => showPopup('donation-popup'), 5000);
           function showPopup() {
             let popup = document.getElementById("popupAd");
             let countdown = document.getElementById("countdown");
