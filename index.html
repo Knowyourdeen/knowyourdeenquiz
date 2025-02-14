@@ -214,96 +214,7 @@
             border: none;
             padding: 5px;
         }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            color: white;
-            z-index: 9999;
-            padding: 0;
-            margin: 0;
-        }
-
-        .popup-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        .popup img {
-            width: 80%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-
-        .popup p {
-            color: white;
-            font-size: 18px;
-            margin: 10px 0;
-            padding: 0 20px;
-            line-height: 1.5;
-            max-width: 600px;
-        }
-
-        .popup strong {
-            color: #ffc107;
-            font-size: 20px;
-        }
-
-        .close-popup {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-            z-index: 10000;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #28a745;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 20px 0;
-            font-size: 18px;
-            text-decoration: none;
-            width: 80%;
-            max-width: 300px;
-            text-align: center;
-        }
-
-        .cta-button:hover {
-            background: #218838;
-        }
-
-        .countdown {
-            margin-top: 15px;
-            font-weight: bold;
-            color: #ffc107;
-            font-size: 16px;
-        }
+       
 
         
 
@@ -312,15 +223,7 @@
     </style>
 </head>
 <body>
-    <div id="donation-popup" class="popup">
-        <span class="close-popup" onclick="closePopup('donation-popup')">×</span>
-        <div class="popup-content">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8Yl7tC0OLtn-JNMwiaE_wFCGKVo6v4aQX5g&s" alt="Hungry child placeholder">
-            <p><strong>DID YOU KNOW:</strong> Every minute, over 100 people break their fast without proper food.</p>
-            <p>Your donation can help provide iftar meals to those in need this Ramadan.</p>
-            <a href="https://knowyourdeen.github.io/knowyourdeendonations/" class="cta-button">CLICK HERE TO DONATE</a>
-        </div>
-    </div>
+   
     <a id="popupAd" class="popup-ad" href="https://knowyourdeen.github.io/Knowyourdeen/" target="_blank">
         <button class="close-button" onclick="closePopup(event)">✕</button>
         <div class="popup-content">
@@ -387,63 +290,7 @@
     </div>
 
     <script>
-        // Popup management
-        let activePopupTimer = null;
-
-        function showPopup(popupId, duration = 5000) {
-            const popup = document.getElementById(popupId);
-            if (popup) {
-                // Close any other open popups
-                document.querySelectorAll('.popup').forEach(p => {
-                    if (p.id !== popupId) {
-                        p.style.display = 'none';
-                    }
-                });
-
-                popup.style.display = 'block';
-
-                if (duration > 0) {
-                    if (activePopupTimer) {
-                        clearTimeout(activePopupTimer);
-                    }
-                    activePopupTimer = setTimeout(() => {
-                        closePopup(popupId);
-                    }, duration);
-                }
-            }
-        }
-
-        function closePopup(popupId) {
-            const popup = document.getElementById(popupId);
-            if (popup) {
-                popup.style.display = 'none';
-            }
-            if (activePopupTimer) {
-                clearTimeout(activePopupTimer);
-                activePopupTimer = null;
-            }
-        }
-
-        // Alternate between popups
-        let lastPopup = 'hub';
-        function alternatePopups() {
-            if (lastPopup === 'hub') {
-                showPopup('donation-popup', 7000);
-                lastPopup = 'donation';
-            } else {
-                showPopup('hub-popup', 5000);
-                lastPopup = 'hub';
-            }
-        }
-
-        // Show popups every 15 seconds, alternating between them
-        setInterval(alternatePopups, 15000);
-
-        // Show first popup after 5 seconds
-        setTimeout(() => {
-            showPopup('hub-popup', 5000);
-        }, 5000);
-
+       
           function showPopup() {
             let popup = document.getElementById("popupAd");
             let countdown = document.getElementById("countdown");
