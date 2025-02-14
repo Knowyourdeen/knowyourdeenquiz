@@ -147,50 +147,89 @@
            .popup-ad {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background: black;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
             color: white;
-            padding: 20px;
             text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
             z-index: 9999;
             text-decoration: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .popup-ad h3,
+
+        .popup-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .popup-ad h3 {
+            color: white;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
         .popup-ad p {
             color: white;
-            margin: 10px 0;
+            font-size: 18px;
+            margin: 15px 0;
         }
+
         .popup-ad .cta-button {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 15px 30px;
             background: #28a745;
             color: white;
             font-weight: bold;
             border-radius: 5px;
-            margin: 10px 0;
+            margin: 20px 0;
+            font-size: 18px;
+            width: 80%;
+            max-width: 300px;
         }
+
         .popup-ad .countdown {
-            margin-top: 10px;
+            margin-top: 20px;
             font-weight: bold;
             color: #ffc107;
+            font-size: 16px;
         }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
      
          
     </style>
 </head>
 <body>
     <a id="popupAd" class="popup-ad" href="https://knowyourdeen.github.io/Knowyourdeen/" target="_blank">
-        <h3>🌙 Ramadan Knowledge Hub</h3>
-        <p>Deepen your understanding of Ramadan and Islam.</p>
-        <div class="cta-button">
-            CLICK HERE TO JOIN
+        <button class="close-button" onclick="closePopup(event)">✕</button>
+        <div class="popup-content">
+            <h3>🌙 Ramadan Knowledge Hub</h3>
+            <p>Deepen your understanding of Ramadan and Islam.</p>
+            <div class="cta-button">
+                CLICK HERE TO JOIN
+            </div>
+            <p id="countdown" class="countdown">Closing in 5s</p>
         </div>
-        <p id="countdown" class="countdown">Closing in 5s</p>
     </a>
 
     <div class="container">
@@ -247,11 +286,11 @@
     </div>
 
     <script>
-         function showPopup() {
+          function showPopup() {
             let popup = document.getElementById("popupAd");
             let countdown = document.getElementById("countdown");
             let timeLeft = 5;
-            popup.style.display = "block";
+            popup.style.display = "flex"; // Changed to flex for better centering
             
             let timer = setInterval(() => {
                 timeLeft--;
@@ -263,8 +302,15 @@
             }, 1000);
         }
 
+        function closePopup(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById("popupAd").style.display = "none";
+        }
+
         // Show pop-up every 10 seconds
         setInterval(showPopup, 10000);
+
 
         const questionBank = [
              {
